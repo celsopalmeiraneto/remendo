@@ -1,0 +1,47 @@
+.shop-info-card {
+  display: flex;
+  flex-direction: row;
+  margin: 0% 2%;
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.shop-info-card .close{
+  position: absolute;
+  right: 2px;
+  top: -3px;
+  margin: 5px;
+}
+
+.shop-info-card .description{
+  display: flex;
+  flex-direction: column;
+  flex: 3;
+  font-size: 0.8rem;
+}
+
+.shop-info-card .description h1{
+  font-size: 1.2rem;
+}
+
+.shop-info-card .description div{
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.shop-info-card .description div span{
+  font-weight: 200;
+}
+
+.shop-info-card .photo{
+  display: flex;
+  align-items: center;
+  flex: 1
+}
+
+.shop-info-card .photo img{
+  width: 100%;
+}
