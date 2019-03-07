@@ -14,10 +14,11 @@ export class Map extends Component {
     this.state = {
       coordsCount: 0,
       isMapReady: false,
-      markers: {},
+      shops: {},
       selectedShop: null,
     };
 
+    this.changeCounter = 0;
     this.mapRef = React.createRef();
   }
 
@@ -35,12 +36,26 @@ export class Map extends Component {
   }
 
   async onChangeBoundaries({map}) {
-    const bounds = map.getBounds();
-    const shops = await TireRepairShop.findByCoords({
-      ne: bounds.getNorthEast().toJSON(),
-      sw: bounds.getSouthWest().toJSON(),
-    });
-    this.drawTireRepairShops({map, shops});
+    this.changeCounter++;
+    setTimeout(async () => {
+      this.changeCounter--;
+
+      if (this.changeCounter !== 0) return;
+
+      let bounds = map.getBounds();
+      bounds = {
+        ne: bounds.getNorthEast().toJSON(),
+        sw: bounds.getSouthWest().toJSON(),
+      };
+
+      if (map.getZoom() > 13) {
+        const shops = await TireRepairShop.findByCoords(bounds);
+        return this.drawTireRepairShops({map, shops});
+      } else {
+        this.removeMarkersFromMap();
+        this.summarizeShops({bounds, map});
+      }
+    }, 700);
   }
 
   drawMap({coords}) {
@@ -75,7 +90,11 @@ export class Map extends Component {
 
   drawTireRepairShops({map, shops}) {
     shops.forEach((shop) => {
-      if (shop.id in this.state.markers) return;
+      if (shop.id in this.state.shops) {
+        const marker = this.state.shops[shop.id].marker;
+        marker.setMap(map);
+        return;
+      }
       const marker = new window.google.maps.Marker({
         icon: {
           scaledSize: new window.google.maps.Size(
@@ -90,10 +109,11 @@ export class Map extends Component {
         position: shop.coords,
         visible: true,
       });
+      shop.marker = marker;
       const item = {};
       item[shop.id] = shop;
       this.setState({
-        markers: Object.assign({}, this.state.markers, item),
+        shops: Object.assign({}, this.state.shops, item),
       });
       window.google.maps.event.addListener(marker,
           'click',
@@ -170,6 +190,31 @@ export class Map extends Component {
         return resolve(map);
       }
     });
+  }
+
+  summarizeShops({bounds, map}) {
+    const columns = 3;
+    const rows = 3;
+
+    const latIncrement = Math.abs(bounds.sw.lat - bounds.ne.lat) / columns;
+    const lngIncrement = Math.abs(bounds.sw.lng - bounds.ne.lng) / rows;
+
+    let coords = [];
+
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < columns; j++) {
+
+      }
+    }
+  }
+
+  removeMarkersFromMap() {
+    for (const id in this.state.shops) {
+      if (this.state.shops.hasOwnProperty(id)) {
+        const marker = this.state.shops[id].marker;
+        marker.setMap(null);
+      }
+    }
   }
 
   render() {
