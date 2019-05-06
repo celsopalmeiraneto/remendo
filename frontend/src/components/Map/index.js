@@ -35,27 +35,65 @@ export class Map extends Component {
     await this.onChangeBoundaries({map});
   }
 
-  async onChangeBoundaries({map}) {
-    this.changeCounter++;
-    setTimeout(async () => {
-      this.changeCounter--;
+  degreesBetweenLatitudes(south, north) {
+    if ((south === 0 || north === 0)
+    || (south > 0 && north > 0 )
+    || (south < 0 && north < 0)) {
+      return Math.abs(south - north);
+    }
+    return Math.abs(south) + Math.abs(north);
+  }
+  degreesBetweenLongitudes(east, west) {
+    const differenceFromZero = this.degreesBetweenLatitudes(east, west);
+    const differenceFrom180 = Math.abs(-180 - east) + Math.abs(180 - west);
+    return Math.min(differenceFromZero, differenceFrom180);
+  }
 
-      if (this.changeCounter !== 0) return;
+  divideMapInQuadrants(map) {
+    const center = map.getCenter();
+    const bounds = map.getBounds();
 
-      let bounds = map.getBounds();
-      bounds = {
-        ne: bounds.getNorthEast().toJSON(),
-        sw: bounds.getSouthWest().toJSON(),
+    return new Array(4).fill(null).map((it, idx) => {
+      const sw = {
+        lat: null,
+        lng: null,
+      };
+      const ne = {
+        lat: null,
+        lng: null,
       };
 
-      if (map.getZoom() > 13) {
-        const shops = await TireRepairShop.findByCoords(bounds);
-        return this.drawTireRepairShops({map, shops});
-      } else {
-        this.removeMarkersFromMap();
-        this.summarizeShops({bounds, map});
+      switch (idx) {
+        case 0:
+          sw.lat = center.lat();
+          sw.lng = center.lng();
+          ne.lat = bounds.getNorthEast().lat();
+          ne.lng = bounds.getNorthEast().lng();
+          break;
+        case 1:
+          sw.lat = bounds.getSouthWest().lat();
+          sw.lng = center.lng();
+          ne.lat = center.lat();
+          ne.lng = bounds.getNorthEast().lng();
+          break;
+        case 2:
+          sw.lat = bounds.getSouthWest().lat();
+          sw.lng = bounds.getSouthWest().lng();
+          ne.lat = center.lat();
+          ne.lng = center.lng();
+          break;
+        case 3:
+          sw.lat = center.lat();
+          sw.lng = bounds.getSouthWest().lng();
+          ne.lat = bounds.getNorthEast().lat();
+          ne.lng = center.lng();
+          break;
+        default:
+          return null;
       }
-    }, 700);
+
+      return {ne, sw};
+    });
   }
 
   drawMap({coords}) {
@@ -169,6 +207,30 @@ export class Map extends Component {
     }
   }
 
+  async onChangeBoundaries({map}) {
+    this.changeCounter++;
+    setTimeout(async () => {
+      this.changeCounter--;
+
+      if (this.changeCounter !== 0) return;
+
+      let bounds = map.getBounds();
+      bounds = {
+        ne: bounds.getNorthEast().toJSON(),
+        sw: bounds.getSouthWest().toJSON(),
+      };
+
+      const zoom = map.getZoom();
+      if (zoom > 7 && zoom < 15) {
+        this.removeMarkersFromMap();
+        this.summarizeShops({map});
+      } else if (zoom >= 15) {
+        const shops = await TireRepairShop.findByCoords(bounds);
+        return this.drawTireRepairShops({map, shops});
+      }
+    }, 700);
+  }
+
   setupMap({coords}) {
     return new Promise(async (resolve, reject) => {
       const map = await this.drawMap({coords});
@@ -192,20 +254,16 @@ export class Map extends Component {
     });
   }
 
-  summarizeShops({bounds, map}) {
-    const columns = 3;
-    const rows = 3;
-
-    const latIncrement = Math.abs(bounds.sw.lat - bounds.ne.lat) / columns;
-    const lngIncrement = Math.abs(bounds.sw.lng - bounds.ne.lng) / rows;
-
-    let coords = [];
-
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < columns; j++) {
-
-      }
-    }
+  async summarizeShops({map}) {
+    const quadrants = this.divideMapInQuadrants(map);
+    console.log(quadrants);
+    await Promise.all(quadrants.map(async (quadrant, idx) => {
+      const count = await TireRepairShop.findByCoords({
+        ...quadrant,
+        includeDocs: false,
+      });
+      console.log(`Quadrante ${idx+1}: ${count} shops.`, quadrant);
+    }));
   }
 
   removeMarkersFromMap() {
@@ -222,14 +280,14 @@ export class Map extends Component {
       <div className="map-container">
         <div className="map" ref={this.mapRef}>
         </div>
-        <div className="info-poi">
-          {this.state.selectedShop && (
+        {this.state.selectedShop && (
+          <div className="info-poi">
             <ShopInfoCard
               shop={this.state.selectedShop}
               onClose={this.closeShopInfoCard.bind(this)}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     );
   }
