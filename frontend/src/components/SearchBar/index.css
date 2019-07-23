@@ -1,0 +1,11 @@
+.search-bar {
+  display: flex;
+  flex-direction: row;
+}
+
+.search-bar input {
+  flex: 9
+}
+.search-bar button {
+  flex: 1
+}

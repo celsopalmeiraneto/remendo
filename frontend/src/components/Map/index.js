@@ -221,12 +221,11 @@ export class Map extends Component {
       };
 
       const zoom = map.getZoom();
-      if (zoom > 7 && zoom < 15) {
-        this.removeMarkersFromMap();
-        this.summarizeShops({map});
-      } else if (zoom >= 15) {
+      if (zoom >= 13) {
         const shops = await TireRepairShop.findByCoords(bounds);
         return this.drawTireRepairShops({map, shops});
+      } else {
+        this.removeMarkersFromMap();
       }
     }, 700);
   }
@@ -256,13 +255,11 @@ export class Map extends Component {
 
   async summarizeShops({map}) {
     const quadrants = this.divideMapInQuadrants(map);
-    console.log(quadrants);
     await Promise.all(quadrants.map(async (quadrant, idx) => {
-      const count = await TireRepairShop.findByCoords({
+      await TireRepairShop.findByCoords({
         ...quadrant,
         includeDocs: false,
       });
-      console.log(`Quadrante ${idx+1}: ${count} shops.`, quadrant);
     }));
   }
 
