@@ -1,0 +1,29 @@
+.searchBar {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.searchBar>input {
+  flex: 9;
+  font-size: 3em;
+  border-style: hidden;
+}
+
+@media (orientation: portrait) {
+  .searchBar>input {
+    font-size: 1em;
+  }
+}
+.searchBar>button {
+  flex: 1;
+  background-color: #4bb347;
+  font-size: 3em;
+  border-style: hidden;
+}
+
+
+.searchBarResults{
+  position: absolute;
+  transform: translateY(-100%);
+}

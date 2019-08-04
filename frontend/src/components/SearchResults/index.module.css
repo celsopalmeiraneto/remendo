@@ -1,0 +1,23 @@
+.searchResults {
+  list-style: none;
+  padding: 0px;
+  background-color: white;
+  margin: 0px;
+  box-shadow: 2px -2px #5d595952;
+}
+.searchResults li {
+  font-size: 1.35em;
+  padding: 5px 10px;
+  border-bottom: 1px solid #dcdcdc;
+}
+.searchResults li:hover{
+  background-color: #00000014;
+}
+
+.close{
+  position: absolute;
+  padding: 0;
+  right: -23px;
+  background-color: white;
+  box-shadow: 1px 1px #5d595952;
+}

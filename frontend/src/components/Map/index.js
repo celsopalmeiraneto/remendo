@@ -1,11 +1,17 @@
 import React, {Component} from 'react';
 
+import {AppContext} from '../../app-context.js';
 import {ShopInfoCard} from '../ShopInfoCard/';
 import {TireRepairShop} from '../../model/TireRepairShop.js';
 
 import './index.css';
 import flatTire from '../../assets/flat-tire.svg';
 import wrench from '../../assets/wrench.ico';
+
+const BRAZILS_CENTROID = {
+  lat: -11.2241431,
+  lng: -52.582926,
+};
 
 export class Map extends Component {
   constructor(props) {
@@ -29,9 +35,10 @@ export class Map extends Component {
   }
 
   async componentDidMount() {
+    const map = await this.setupMap({coords: BRAZILS_CENTROID});
     const coords = await this.getUserPosition();
-    const map = await this.setupMap({coords});
     this.drawUserPositionOnMap({coords, map});
+    map.panTo(coords);
     await this.onChangeBoundaries({map});
   }
 
@@ -182,11 +189,7 @@ export class Map extends Component {
   }
 
   async getUserPosition() {
-    const centroidOfBrazil = {
-      lat: -11.2241431,
-      lng: -52.582926,
-    };
-    if (!('geolocation' in navigator)) return centroidOfBrazil;
+    if (!('geolocation' in navigator)) return BRAZILS_CENTROID;
 
     try {
       const position = await (new Promise((resolve, reject) => {
@@ -203,7 +206,7 @@ export class Map extends Component {
       };
     } catch (e) {
       console.error(e);
-      return centroidOfBrazil;
+      return BRAZILS_CENTROID;
     }
   }
 
@@ -222,9 +225,13 @@ export class Map extends Component {
 
       const zoom = map.getZoom();
       if (zoom >= 13) {
+        this.context.setZoom(zoom);
+        this.context.setBoundaries(bounds);
         const shops = await TireRepairShop.findByCoords(bounds);
         return this.drawTireRepairShops({map, shops});
       } else {
+        this.context.setZoom(null);
+        this.context.setBoundaries(null);
         this.removeMarkersFromMap();
       }
     }, 700);
@@ -289,3 +296,5 @@ export class Map extends Component {
     );
   }
 }
+
+Map.contextType = AppContext;

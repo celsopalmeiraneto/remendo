@@ -16,7 +16,7 @@ export class TireRepairShop {
 
 TireRepairShop._db = new PouchDB('http://127.0.0.1:5984/remendo');
 
-TireRepairShop.findByCoords = async ({ne, sw, includeDocs = true}) => {
+TireRepairShop._queryIndexByCoords = async ({ne, sw, includeDocs = true}) => {
   const res = await TireRepairShop._db.query('repairShops/byCoords', {
     startkey: [sw.lat, sw.lng],
     endkey: [ne.lat, ne.lng],
@@ -30,4 +30,17 @@ TireRepairShop.findByCoords = async ({ne, sw, includeDocs = true}) => {
   } else {
     return res.rows.length;
   }
+};
+
+TireRepairShop.findByCoords = TireRepairShop._queryIndexByCoords;
+
+TireRepairShop.findByNameAndCoords = async ({name,
+  ne, sw,
+  includeDocs = true,
+}) => {
+  const docs = await TireRepairShop._queryIndexByCoords({ne, sw,
+    includeDocs: true,
+  });
+  name = name.toLowerCase();
+  return docs.filter((doc) => doc.name.toLowerCase().includes(name));
 };
