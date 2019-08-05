@@ -3,7 +3,7 @@
   padding: 0px;
   background-color: white;
   margin: 0px;
-  box-shadow: 2px -2px #5d595952;
+  box-shadow: 2px -2px 4px 0px rgba(0, 0, 0, 0.13);
 }
 .searchResults li {
   font-size: 1.35em;
@@ -17,7 +17,7 @@
 .close{
   position: absolute;
   padding: 0;
-  right: -23px;
+  right: -20px;
   background-color: white;
-  box-shadow: 1px 1px #5d595952;
+  box-shadow: 2px -2px 4px 0px rgba(0, 0, 0, 0.13);;
 }
