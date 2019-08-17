@@ -15,16 +15,12 @@ export class SearchBar extends Component {
     };
   }
 
-  async search(term, boundaries) {
-    const shops = await TireRepairShop.findByNameAndCoords({name: term,
-      ...boundaries});
-    this.setState({searchResults: shops});
-  }
-
-  setTerm(term) {
-    this.setState({
-      searchTerm: term,
-    });
+  noResults() {
+    return {
+      id: -1,
+      name: 'Não foram encontrados resultados.',
+      _unclickable: true,
+    };
   }
 
   render() {
@@ -36,7 +32,12 @@ export class SearchBar extends Component {
         </div>
         <input type="text" placeholder="Encontre uma Borracharia"
           value={this.state.searchTerm}
-          onChange={(e) => this.setTerm(e.target.value)}>
+          onChange={(e) => this.setTerm(e.target.value)}
+          onKeyUp={(e) => {
+            if (e.key !== 'Enter') return;
+            this.search.call(this, this.state.searchTerm,
+                this.context.boundaries);
+          }}>
         </input>
         <button onClick={(e) => {
           this.search.call(this, this.state.searchTerm,
@@ -46,6 +47,35 @@ export class SearchBar extends Component {
         </button>
       </div>
     );
+  }
+
+  async search(term, boundaries) {
+    if (!term || term.trim().length < 2) {
+      return this.setState({searchResults: [this.typeSomething()]});
+    }
+
+    const shops = await TireRepairShop.findByNameAndCoords({name: term,
+      ...boundaries});
+
+    if (shops.length === 0) {
+      shops.push(this.noResults());
+    }
+
+    this.setState({searchResults: shops});
+  }
+
+  setTerm(term) {
+    this.setState({
+      searchTerm: term,
+    });
+  }
+
+  typeSomething() {
+    return {
+      id: -1,
+      name: 'Sua busca deve ter no mínimo dois caracteres.',
+      _unclickable: true,
+    };
   }
 }
 

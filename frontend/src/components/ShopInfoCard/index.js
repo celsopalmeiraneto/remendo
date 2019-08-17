@@ -1,6 +1,7 @@
+import closeIcon from '../../assets/close.svg';
 import React, {Component} from 'react';
 
-import './index.css';
+import styles from './index.module.css';
 
 export class ShopInfoCard extends Component {
   closeComponent() {
@@ -12,20 +13,20 @@ export class ShopInfoCard extends Component {
   render() {
     const shop = this.props.shop;
     return (
-      <div className="shop-info-card">
-        <div className="close">
+      <div className={styles.shopInfoCard}>
+        <div className={styles.close}>
           <button
             aria-label="close"
             onClick={() => this.closeComponent()}>
-            X
+            <img alt="" src={closeIcon} />
           </button>
         </div>
-        <div className="description">
+        <div className={styles.description}>
           <h1>{shop.name}</h1>
           <div>Endereço: <span>{shop.address}</span></div>
           <div>Horário: <span>{shop.operationHours}</span></div>
         </div>
-        <div className="photo">
+        <div className={styles.photo}>
           <img src={shop.pictureUrl} alt="Bicicletaria ou Borracharia" />
         </div>
       </div>

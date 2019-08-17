@@ -9,16 +9,23 @@ class App extends Component {
   constructor() {
     super();
 
-    this.setZoom = (zoom) => this.setState({zoom: zoom});
     this.setBoundaries = (bounds) => this.setState({boundaries: bounds});
+    this.setHighlightedShop = (shop) => {
+      this.setState({highlightedShop: shop});
+    };
+    this.setZoom = (zoom) => this.setState({zoom: zoom});
 
     this.state = {
       zoom: null,
+      highlightedShop: null,
       boundaries: null,
       setZoom: this.setZoom,
+      setHighlightedShop: this.setHighlightedShop,
       setBoundaries: this.setBoundaries,
+      setCentroidTo: () => {},
     };
   }
+
   render() {
     return (
       <AppContext.Provider value={this.state}>

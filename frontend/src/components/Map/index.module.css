@@ -1,0 +1,13 @@
+.mapContainer {
+  height: 100%;
+}
+.map{
+  height: 100%;
+}
+.infoPoi{
+  bottom: 15vw;
+  height: 25vw;
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+}

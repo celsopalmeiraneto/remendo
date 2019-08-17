@@ -1,10 +1,12 @@
-import React, {useState, useEffect} from 'react';
-import styles from './index.module.css';
-
+import {AppContext} from '../../app-context.js';
 import closeIcon from '../../assets/close.svg';
+import React, {useContext, useEffect, useState} from 'react';
+import styles from './index.module.css';
 
 export function SearchResults(props) {
   const [isOpen, setIsOpen] = useState(true);
+
+  const context = useContext(AppContext);
 
   useEffect(() => {
     setIsOpen(true);
@@ -18,7 +20,17 @@ export function SearchResults(props) {
       <ul className={styles.searchResults}>
         {props.items.map((it) => {
           return (
-            <li key={it.id} className={styles.searchResults}>
+            <li
+              className={`${styles.searchResults}
+                ${it._unclickable ? styles.unclickable : ''}`
+              }
+              key={it.id}
+              onClick={() => {
+                if (it._unclickable) return;
+                context.setHighlightedShop(it);
+                context.setCentroidTo(it.coords);
+              }}
+            >
               {it.name}
             </li>
           );

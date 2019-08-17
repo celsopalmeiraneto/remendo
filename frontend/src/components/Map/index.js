@@ -4,7 +4,7 @@ import {AppContext} from '../../app-context.js';
 import {ShopInfoCard} from '../ShopInfoCard/';
 import {TireRepairShop} from '../../model/TireRepairShop.js';
 
-import './index.css';
+import styles from './index.module.css';
 import flatTire from '../../assets/flat-tire.svg';
 import wrench from '../../assets/wrench.ico';
 
@@ -21,7 +21,6 @@ export class Map extends Component {
       coordsCount: 0,
       isMapReady: false,
       shops: {},
-      selectedShop: null,
     };
 
     this.changeCounter = 0;
@@ -29,9 +28,7 @@ export class Map extends Component {
   }
 
   closeShopInfoCard() {
-    this.setState({
-      selectedShop: null,
-    });
+    this.context.setHighlightedShop(null);
   }
 
   async componentDidMount() {
@@ -40,6 +37,7 @@ export class Map extends Component {
     this.drawUserPositionOnMap({coords, map});
     map.panTo(coords);
     await this.onChangeBoundaries({map});
+    this.context.setCentroidTo = this.setCentroidTo.bind(this, map);
   }
 
   degreesBetweenLatitudes(south, north) {
@@ -163,9 +161,7 @@ export class Map extends Component {
       window.google.maps.event.addListener(marker,
           'click',
           () => {
-            this.setState({
-              selectedShop: shop,
-            });
+            this.context.setHighlightedShop(shop);
           },
       );
     });
@@ -281,19 +277,23 @@ export class Map extends Component {
 
   render() {
     return (
-      <div className="map-container">
-        <div className="map" ref={this.mapRef}>
+      <div className={styles.mapContainer}>
+        <div className={styles.map} ref={this.mapRef}>
         </div>
-        {this.state.selectedShop && (
-          <div className="info-poi">
+        {this.context.highlightedShop && (
+          <div className={styles.infoPoi}>
             <ShopInfoCard
-              shop={this.state.selectedShop}
+              shop={this.context.highlightedShop}
               onClose={this.closeShopInfoCard.bind(this)}
             />
           </div>
         )}
       </div>
     );
+  }
+
+  setCentroidTo(map, coords) {
+    map.setCenter(coords);
   }
 }
 

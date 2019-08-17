@@ -7,17 +7,19 @@
 }
 .searchResults li {
   font-size: 1.35em;
-  padding: 5px 10px;
+  padding: 10px 15px;
   border-bottom: 1px solid #dcdcdc;
+  user-select: none;
 }
-.searchResults li:hover{
+.searchResults li:hover:not(.unclickable) {
   background-color: #00000014;
 }
 
-.close{
+.close {
   position: absolute;
   padding: 0;
-  right: -20px;
+  right: -19px;
   background-color: white;
-  box-shadow: 2px -2px 4px 0px rgba(0, 0, 0, 0.13);;
+  box-shadow: 2px -2px 4px 0px rgba(0, 0, 0, 0.13);
+  border: 0;
 }
