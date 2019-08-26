@@ -16,6 +16,7 @@ class App extends Component {
     this.setZoom = (zoom) => this.setState({zoom: zoom});
 
     this.state = {
+      animateShop: () => {},
       zoom: null,
       highlightedShop: null,
       boundaries: null,

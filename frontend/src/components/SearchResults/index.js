@@ -29,6 +29,7 @@ export function SearchResults(props) {
                 if (it._unclickable) return;
                 context.setHighlightedShop(it);
                 context.setCentroidTo(it.coords);
+                context.animateShop(it.id);
               }}
             >
               {it.name}

@@ -27,6 +27,17 @@ export class Map extends Component {
     this.mapRef = React.createRef();
   }
 
+  animateShop(shopId) {
+    const shop = this.state.shops[shopId];
+    if (!shop) return;
+
+    const marker = shop.marker;
+    marker.setAnimation(window.google.maps.Animation.BOUNCE);
+    setTimeout(() => {
+      marker.setAnimation(null);
+    }, 500);
+  }
+
   closeShopInfoCard() {
     this.context.setHighlightedShop(null);
   }
@@ -38,6 +49,7 @@ export class Map extends Component {
     map.panTo(coords);
     await this.onChangeBoundaries({map});
     this.context.setCentroidTo = this.setCentroidTo.bind(this, map);
+    this.context.animateShop = this.animateShop.bind(this);
   }
 
   degreesBetweenLatitudes(south, north) {
