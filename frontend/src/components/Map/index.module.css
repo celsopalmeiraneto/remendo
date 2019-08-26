@@ -1,13 +1,18 @@
 .mapContainer {
   height: 100%;
+  position: relative;
 }
 .map{
   height: 100%;
 }
 .infoPoi{
-  bottom: 15vw;
-  height: 25vw;
+  align-items: flex-end;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
   overflow: hidden;
+  padding-bottom: 10px;
   position: absolute;
   width: 100%;
+  z-index: 1;
 }
