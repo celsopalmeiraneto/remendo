@@ -161,6 +161,10 @@ export class Map extends Component {
       window.google.maps.event.addListener(marker,
           'click',
           () => {
+            marker.setAnimation(window.google.maps.Animation.BOUNCE);
+            setTimeout(() => {
+              marker.setAnimation(null);
+            }, 500);
             this.context.setHighlightedShop(shop);
           },
       );
@@ -293,7 +297,7 @@ export class Map extends Component {
   }
 
   setCentroidTo(map, coords) {
-    map.setCenter(coords);
+    map.panTo(coords);
   }
 }
 
