@@ -278,8 +278,6 @@ export class Map extends Component {
   render() {
     return (
       <div className={styles.mapContainer}>
-        <div className={styles.map} ref={this.mapRef}>
-        </div>
         {this.context.highlightedShop && (
           <div className={styles.infoPoi}>
             <ShopInfoCard
@@ -288,6 +286,8 @@ export class Map extends Component {
             />
           </div>
         )}
+        <div className={styles.map} ref={this.mapRef}>
+        </div>
       </div>
     );
   }
