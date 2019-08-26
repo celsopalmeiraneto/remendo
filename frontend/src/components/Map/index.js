@@ -153,8 +153,8 @@ export class Map extends Component {
       const marker = new window.google.maps.Marker({
         icon: {
           scaledSize: new window.google.maps.Size(
-              1.5,
-              1.5,
+              2,
+              2,
               'rem',
               'rem',
           ),
@@ -185,15 +185,6 @@ export class Map extends Component {
 
   drawUserPositionOnMap({coords, map}) {
     new window.google.maps.Marker({
-      icon: {
-        scaledSize: new window.google.maps.Size(
-            1.5,
-            1.5,
-            'rem',
-            'rem',
-        ),
-        url: flatTire,
-      },
       map,
       position: coords,
       visible: true,
