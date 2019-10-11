@@ -26,7 +26,7 @@ export class ShopInfoCard extends Component {
         </div>
         <div className={styles.infoBox}>
           <div className={styles.description}>
-            <div>Endereço: <span>{shop.address}</span></div>
+            <div>Endereço: <span>{shop.address}. {shop.complement}</span></div>
             <div>Horário: <span>{shop.operationHours}</span></div>
           </div>
           <div className={styles.photo}>

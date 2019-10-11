@@ -3,6 +3,7 @@ import PouchDB from 'pouchdb';
 export class TireRepairShop {
   constructor() {
     this.address = null;
+    this.complement = null;
     this.coords = {
       lat: null,
       lng: null,
